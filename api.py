@@ -1,7 +1,8 @@
 import requests
 import os
-
+import json
 from dotenv import load_dotenv
+import time
 
 # TODO write unit tests
 
@@ -27,3 +28,19 @@ def get_results(job_id):
     response = api_call.json()
 
     return response
+def check(encoded_string):
+    response = detect_humans(encoded_string)
+
+    job_id = response['data']['job_id']
+
+    status = 0
+
+    while not status == 200:
+        print("Checking for results...")
+        time.sleep(0.1)
+        response = get_results(job_id)
+        status = response['status']
+        print(status == 200 and "Results found!" or "No results yet")
+
+    data = json.dumps(response['data'])
+    return data
